@@ -1,0 +1,588 @@
+@Library('pipeline-framework')_
+properties(
+    [
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+        parameters(
+            [
+				separator(name: "SEPARATOR_INFRASTRUCTURE", sectionHeader: "INFRASTRUCTURE",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+				string(defaultValue: '', description: 'Not Required for Production', name: 'AGENT', trim: true),
+				string(defaultValue: '', description: 'Not Required for Production', name: 'CHECKOUT_USING_USER', trim: true),
+                string(defaultValue: '', description: '', name: 'KUBECONFIG_CREDENTIAL', trim: true),
+				separator(name: "SEPARATOR_CODE", sectionHeader: "CODE",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+                booleanParam(defaultValue: true, description: '', name: 'LOCAL_GIT'),
+                booleanParam(defaultValue: false, description: '', name: 'CUSTOM_BINARY_PATH'),
+                string(defaultValue: '', description: '', name: 'GIT_USER_HOME_DIR',trim: true),
+				string(defaultValue: '', description: 'Default will be used if not provided', name: 'DEVOPS_REPO', trim: true),
+				string(defaultValue: '', description: 'Not Required for Production. Default will be used', name: 'CUSTOMER_CONFIGS', trim: true),
+				string(defaultValue: '', description: '', name: 'VERSION',trim: true),
+				separator(name: "SEPARATOR_CODE", sectionHeader: "CUSTOMER-INFO",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+                string(defaultValue: '', description: '', name: 'CLUSTER', trim: true),
+                string(defaultValue: '', description: '', name: 'CUSTOMER_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'IS_NAMESPACE', trim: true),
+                string(defaultValue: '', description: '', name: 'CUSTOMER_SERVICE', trim: true),
+                string(defaultValue: '', description: '', name: 'ENVIRONMENT', trim: true),
+                choice(choices: ['C','XS','S','M','L'], description: '', name: 'CUSTOMER_SIZE'),
+                password(defaultValue: '', description: '', name: 'CACERTS_SSL_TRUSTSTORE_PASSWORD'),
+				string(defaultValue: '', description: '', name: 'DEPLOYMENT_TYPE', trim: true),
+                string(defaultValue: '', description: '', name: 'input_parameter', trim: true),
+                string(defaultValue: '', description: '', name: 'SMARTREPORTING_SOURCE_VERSION', trim: true),
+                string(defaultValue: '', description: '', name: 'PLATFORM_HELM_VERSION', trim: true),																			   																							   
+                separator(name: "SEPARATOR_CODE", sectionHeader: "PRODUCTS",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+                string(defaultValue: '', description: '', name: 'DEPLOYMENT_MODE', trim: true),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_SMARTREPORT'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_REMEDY'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_OPENFIRE'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_VIRTUALCHAT'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_DWP'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_DWPA'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_BWF'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_MCSM'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_ITSM_INSIGHT'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_TSOMPLUGIN'),
+                //booleanParam(defaultValue: '', description: '', name: 'HELIX_SMARTAPPS_TELCO'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_SMARTAPPS_CSM'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_SMARTAPPS_FAS'),
+                booleanParam(defaultValue: '', description: '', name: 'HELIX_DRIFTMANAGEMENTPLUGIN'),
+                //booleanParam(defaultValue: '', description: '', name: 'HELIX_SCCM'),
+                //booleanParam(defaultValue: '', description: '', name: 'HELIX_BCM'),
+                // booleanParam(defaultValue: 'false', description: '', name: 'BLUEMIX_HELIX_COGNITIVE_CHATBOT'),
+                // choice(choices: ['premium','plus'], description: '', name: 'BLUEMIX_HELIX_COGNITIVE_CHATBOT_PLAN'),
+                // booleanParam(defaultValue: 'false', description: '', name: 'BLUEMIX_HELIX_COGNITIVE_AUTOMATION'),
+                // choice(choices: ['standard','plus'], description: '', name: 'BLUEMIX_HELIX_COGNITIVE_AUTOMATION_NLC_PLAN'),
+                // choice(choices: ['standard'], description: '', name: 'BLUEMIX_HELIX_COGNITIVE_AUTOMATION_TONEANALYZER_PLAN'),
+                //booleanParam(defaultValue: 'false', description: '', name: 'BLUEMIX_HELIX_COGNITIVE_SEARCH'),
+                //choice(choices: ['premium','advanced','lite'], description: '', name: 'BLUEMIX_HELIX_COGNITIVE_SEARCH_PLAN'),
+                separator(name: "SEPARATOR_CODE", sectionHeader: "OTHER_INPUT_PARAMS",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+                booleanParam(defaultValue: '', description: '', name: 'IS_CLOUD'),
+                //booleanParam(defaultValue: 'true', description: '', name: 'COMPACT_DEPLOYMENT'),
+                string(defaultValue: '', description: '', name: 'INGRESS_CLASS', trim: true),
+                booleanParam(defaultValue: '', description: '', name: 'ROUTE_ENABLED'),
+                booleanParam(defaultValue: '', description: '', name: 'ROUTE_TLS_ENABLED'),
+                booleanParam(defaultValue: '', description: '', name: 'OS_RESTRICTED_SCC'),
+                booleanParam(defaultValue: '', description: '', name: 'SIDECAR_FLUENTBIT'),
+                booleanParam(defaultValue: '', description: '', name: 'SIDECAR_SUPPORT_ASSISTANT'),
+                string(defaultValue: '', description: '', name: 'CLUSTER_DOMAIN', trim: true),
+                string(defaultValue: '', description: '', name: 'AR_ADMIN_USER', trim: true),
+                password(defaultValue: '', description: '', name: 'AR_ADMIN_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'HARBOR_REGISTRY_HOST', trim: true),
+                string(defaultValue: '', description: '', name: 'IMAGE_REGISTRY_USERNAME', trim: true),
+                password(defaultValue: '', description: '', name: 'IMAGE_REGISTRY_PASSWORD'),
+                choice(choices: ['DTR','HARBOR','DTR_STG'], description: '', name: 'REGISTRY_TYPE'),
+                choice(choices: ['postgres', 'mssql', 'oracle'], description: '', name: 'DB_TYPE'),
+				booleanParam(defaultValue: '', description: '', name: 'DB_SSL_ENABLED'),
+                //booleanParam(defaultValue: '', description: '', name: 'DB_JDBC_URL'),
+                string(defaultValue: '', description: '', name: 'DB_JDBC_URL', trim: true),
+                string(defaultValue: '', description: '', name: 'DB_PORT', trim: true),
+                string(defaultValue: '', description: '', name: 'ORACLE_SERVICE_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'DATABASE_HOST_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'DATABASE_ADMIN_USER', trim: true),
+                password(defaultValue: '', description: '', name: 'DATABASE_ADMIN_PASSWORD'),
+                booleanParam(defaultValue: '', description: '', name: 'DATABASE_RESTORE'),
+                booleanParam(defaultValue: '', description: '', name: 'IS_DATABASE_ALWAYS_ON'),
+                string(defaultValue: '', description: '', name: 'HELM_NODE', trim: true),
+                string(defaultValue: '', description: '', name: 'HELM_REPO', trim: true),
+                string(defaultValue: '', description: '', name: 'SMARTREPORTING_HELM_REPO', trim: true),
+                string(defaultValue: '', description: '', name: 'SMARTAPPS_HELM_REPO', trim: true),
+                //choice(choices: ['Elastic', 'Classic'], description: '', name: 'PLATFORM_FTS_TYPE'),
+                //string(defaultValue: '', description: 'Ignore this if FTS_TYPE is Elastic.', name: 'PLATFORM_FTS_VOLUME_CLAIM_TEMPLATE_STORAGE_CLASS', trim: true),
+                //string(defaultValue: '', description: '', name: 'ELASTICSEARCH_LOG_STORAGE_CLASS', trim: true),
+                //string(defaultValue: '', description: '', name: 'ELASTICSEARCH_FTS_STORAGE_CLASS', trim: true),
+                //string(defaultValue: '', description: '', name: 'ES_LOGS_DATA_STORAGE_SIZE', trim: true),
+                //string(defaultValue: '', description: '', name: 'ES_FTS_DATA_STORAGE_SIZE', trim: true),
+                //string(defaultValue: '', description: '', name: 'MIDTIER_USER_VOLUME_CLAIM_TEMPLATE_STORAGE_CLASS', trim: true),
+                //string(defaultValue: '', description: '', name: 'MIDTIER_INT_VOLUME_CLAIM_TEMPLATE_STORAGE_CLASS', trim: true),
+                string(defaultValue: '', description: '', name: 'LOGS_ELASTICSEARCH_HOSTNAME', trim: true),
+                booleanParam(defaultValue: '', description: '', name: 'LOGS_ELASTICSEARCH_TLS'),
+                password(defaultValue: '', description: '', name: 'LOGS_ELASTICSEARCH_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'FTS_ELASTICSEARCH_HOSTNAME', trim: true),
+                string(defaultValue: '', description: '', name: 'FTS_ELASTICSEARCH_PORT', trim: true),
+                //string(defaultValue: '', description: '', name: 'FTS_ELASTICSEARCH_USERNAME', trim: true),
+                password(defaultValue: '', description: '', name: 'FTS_ELASTICSEARCH_USER_PASSWORD'),
+                booleanParam(defaultValue: '', description: '', name: 'FTS_ELASTICSEARCH_SECURE'),
+                password(defaultValue: '', description: '', name: 'BAKEDUSER_HANNAH_ADMIN_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'AR_LOCALE_TO_INSTALL', trim: true),
+                string(defaultValue: '', description: '', name: 'IMAGESECRET_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'AR_DB_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'AR_DB_USER', trim: true),
+                password(defaultValue: '', description: '', name: 'AR_DB_PASSWORD'),
+                password(defaultValue: '', description: '', name: 'AR_SERVER_APP_SERVICE_PASSWORD'),
+                password(defaultValue: '', description: '', name: 'AR_SERVER_DSO_USER_PASSWORD'),
+                password(defaultValue: '', description: '', name: 'AR_SERVER_MIDTIER_SERVICE_PASSWORD'),
+                //string(defaultValue: '', description: '', name: 'SMARTIT_DB_NAME', trim: true),
+                //string(defaultValue: '', description: '', name: 'SMARTIT_DB_USER_SYSTEM', trim: true),
+                //password(defaultValue: '', description: '', name: 'SMARTIT_DB_PASSWORD_SYSTEM'),
+                //string(defaultValue: '', description: '', name: 'SMARTIT_DB_USER_BUSINESS', trim: true),
+                //password(defaultValue: '', description: '', name: 'SMARTIT_DB_PASSWORD_BUSINESS'),
+                string(defaultValue: '', description: '', name: 'SMARTREPORTING_DB_NAME', trim: true),
+                string(defaultValue: '', description: '', name: 'SMARTREPORTING_DB_USER', trim: true),
+                password(defaultValue: '', description: '', name: 'SMARTREPORTING_DB_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'VC_RKM_USER_NAME', trim: true),
+                password(defaultValue: '', description: '', name: 'VC_RKM_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'VC_PROXY_USER_LOGIN_NAME', trim: true),
+                password(defaultValue: '', description: '', name: 'VC_PROXY_USER_PASSWORD'),
+                //string(defaultValue: '', description: '', name: 'OPENFIRE_DB_USER_NAME', trim: true),
+                //password(defaultValue: '', description: '', name: 'OPENFIRE_DB_USER_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'DWP_CONFIG_PRIMARY_ORG_NAME', trim: true),
+                password(defaultValue: '', description: '', name: 'DWP_CONFIG_SUBTENANT_USER_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'AR_SERVER_ALIAS', trim: true),
+                string(defaultValue: '', description: '', name: 'PLATFORM_ADMIN_PLATFORM_EXTERNAL_IPS', trim: true),
+                booleanParam(defaultValue: '', description: '', name: 'ENABLE_PLATFORM_INT_NORMALIZATION'),
+                booleanParam(defaultValue: '', description: '', name: 'MIDTIERCACHEBUILDER_TRIGGER_PRELOAD'),
+                string(defaultValue: '', description: '', name: 'MIDTIERCACHEBUILDER_SCHEDULE', trim: true),
+                //string(defaultValue: '', description: '', name: 'RSSO_DB_HOSTNAME', trim: true),
+                //string(defaultValue: '', description: '', name: 'RSSO_DB_NAME', trim: true),
+                //string(defaultValue: '', description: '', name: 'RSSO_DB_USER', trim: true),
+                //password(defaultValue: '', description: '', name: 'RSSO_DB_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'RSSO_URL', trim: true),
+                string(defaultValue: '', description: '', name: 'RSSO_ADMIN_USER', trim: true),
+                password(defaultValue: '', description: '', name: 'RSSO_ADMIN_PASSWORD'),
+                string(defaultValue: '', description: '', name: 'TENANT_DOMAIN', trim: true),
+				booleanParam(defaultValue: 'false', description: '', name: 'SIDECAR_FLUENT_OUTPUT_TYPE_SPLUNK'),
+                string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_HOSTNAME', trim: true),
+                string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_PORT', trim: true),
+                string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_OUTPUT_CUSTOM', trim: true),
+                booleanParam(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_DETAIL_LOG'),
+                string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_TOKEN', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_COMPRESS', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_CHANNEL', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_SEND_RAW', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_EVENT_KEY', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_EVENT_INDEX', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_EVENT_FIELD', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_EVENT_SOURCE', trim: true),
+                //string(defaultValue: '', description: '', name: 'SIDECAR_FLUENT_SPLUNK_EVENT_SOURCETYPE', trim: true),
+                separator(name: "SEPARATOR_CODE", sectionHeader: "PREP-STEPS",sectionHeaderStyle: """background-color: #FAD7A0;text-align: center;padding: 4px;color: #343434;font-size: 22px;font-weight: normal;text-transform: uppercase;font-family: 'Orienta', sans-serif;letter-spacing: 1px;font-style: italic;"""),
+                booleanParam(defaultValue: '', description: '', name: 'GENERATE_INPUT'),
+                //booleanParam(defaultValue: '', description: '', name: 'GENERATE_PASSWORDS'),
+                booleanParam(defaultValue: '', description: '', name: 'CHECKIN_INPUT_FILE'),
+                string(defaultValue: '', description: '', name: 'NOTIFYLIST', trim: true)
+                
+            ]
+        )
+    ]
+)
+timeout(360){
+env.ENVIONMENTS_REPO="${CUSTOMER_CONFIGS}"
+env.CURRENT_BRANCH="${VERSION}"
+								  
+													   
+node("${AGENT}"){
+    env.CUSTOMER_FILE="${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/${CUSTOMER_SERVICE}-${ENVIRONMENT}.sh"
+    env.HELIX_GENERATE_CONFIG_WORKSPACE="${WORKSPACE}"
+    echo "generate config workspace is: ${HELIX_GENERATE_CONFIG_WORKSPACE}"
+    if("${ENVIRONMENT}".toLowerCase() == "prod"){
+        env.CLUSTER_FILE="${WORKSPACE}/environments/${CLUSTER}/${CLUSTER}.sh"
+    }else{
+        env.CLUSTER_FILE="${WORKSPACE}/environments/${CLUSTER}/${CLUSTER}-${ENVIRONMENT}.sh"
+    }
+        try{
+                setPipelineProperties()
+                startStage("${PIPELINE_NAME}","${PIPELINE_TYPE}");
+                currentBuild.displayName="${CLUSTER}-${CUSTOMER_SERVICE}-${ENVIRONMENT}-${env.BUILD_NUMBER}"
+
+                if("${LOCAL_GIT}"=="false"){
+                
+                checkoutRepos();
+                }else{
+                    withCredentials([usernamePassword(credentialsId: "${CHECKOUT_USING_USER}", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    sh'''
+                        rm -rf ${WORKSPACE}/*
+                                          
+                        REPO_URL=$(echo ${DEVOPS_REPO} | awk -v GIT_USERNAME=$GIT_USERNAME -v GIT_PASSWORD=$GIT_PASSWORD -F"\\/\\/" \'{print $1 "//" GIT_USERNAME ":" GIT_PASSWORD "@" $2}\')
+                        git clone ${REPO_URL}
+                        cp -R ${WORKSPACE}/$(echo $(basename ${REPO_URL}) |cut -d'.' -f 1)/* ${WORKSPACE}
+                        mkdir -p ${WORKSPACE}/environments	
+                        #cd ${WORKSPACE}/environments
+                        CUST_REPO_URL=$(echo ${CUSTOMER_CONFIGS} | awk -v GIT_USERNAME=$GIT_USERNAME -v GIT_PASSWORD=$GIT_PASSWORD -F"\\/\\/" \'{print $1 "//" GIT_USERNAME ":" GIT_PASSWORD "@" $2}\')
+                        git clone ${CUST_REPO_URL}
+                        cp -R ${WORKSPACE}/$(echo $(basename ${CUST_REPO_URL}) |cut -d'.' -f 1)/* ${WORKSPACE}/environments
+                        rm -rf ${WORKSPACE}/$(echo $(basename ${CUST_REPO_URL}) |cut -d'.' -f 1)/*
+                        '''
+                    }
+                     
+                }
+                
+                stage("Generate Input File"){
+                    if("${GENERATE_INPUT}"=="true"){
+                        env.BUNDLES_TOBE_LICENSED="";
+                        if("${HELIX_DWP}" == "true"){
+                            echo "Adding DWP bundles to be Licenses"
+                            env.BUNDLES_TOBE_LICENSED=env.BUNDLES_TOBE_LICENSED+"com.bmc.dwp ";
+                        }
+                        if("${HELIX_DWPA}" == "true"){
+                            echo "Adding DWPA bundles to be Licenses"
+                            env.BUNDLES_TOBE_LICENSED=env.BUNDLES_TOBE_LICENSED+"myit-sb ";
+                        }
+                        if("${HELIX_BWF}" == "true"){
+                            echo "Adding BWF bundles to be Licenses"
+                            env.BUNDLES_TOBE_LICENSED=env.BUNDLES_TOBE_LICENSED+"com.bmc.dsm.task-lib com.bmc.dsm.ticketing-lib com.bmc.dsm.notification-lib com.bmc.dsm.flowsets-lib com.bmc.dsm.social-lib com.bmc.dsm.search-lib com.bmc.dsm.attachment-service-lib com.bmc.dsm.knowledge com.bmc.dsm.bwfa com.bmc.dsm.slm-lib com.bmc.dsm.shared-components-lib com.bmc.dsm.shared-services-lib com.bmc.dsm.case-lib com.bmc.dsm.cognitive-lib com.bmc.dsm.email-lib ";
+                        }
+                        if("${HELIX_MCSM}" == "true"){
+                            echo "Adding MCSM bundles to be Licenses"
+                            env.BUNDLES_TOBE_LICENSED=env.BUNDLES_TOBE_LICENSED+"com.bmc.dsm.ticketing-lib com.bmc.dsm.flowsets-lib com.bmc.dsm.social-lib com.bmc.dsm.slm-lib com.bmc.dsm.notification-lib com.bmc.dsm.attachment-service-lib com.bmc.dsm.shared-components-lib com.bmc.dsm.shared-services-lib com.bmc.dsm.mcsm com.bmc.dsm.ticket-brokering-lib ";
+                        }
+                        if("${HELIX_ITSM_INSIGHT}" == "true"){
+                            echo "Adding ITSM Insight bundles to be Licenses"
+                            env.BUNDLES_TOBE_LICENSED=env.BUNDLES_TOBE_LICENSED+"com.bmc.dsom.itsm-insights-app com.bmc.dsom.ai-foundation-service-lib com.bmc.aif.proactive-incident-problem-management-design ";
+                        }
+                        echo "List of Bundles= ${env.BUNDLES_TOBE_LICENSED}"
+                                                
+                        connectClusters("${CLUSTER}", "${KUBECONFIG_CREDENTIAL}");
+                        sh'''
+                            set +x
+                            set -a
+                            . ${WORKSPACE}/pipeline/vars/common-environment.vars
+
+                            #. ${CLUSTER_FILE}
+                            set +a
+                            set -x
+                            if [ "${CUSTOM_BINARY_PATH}" == "true" ]; then
+                                source ~/.bash_profile
+                            fi
+                            mkdir -p ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/certs/ ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/ssljdbc/
+                            #mkdir -p ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/ssljdbc 
+                            export BUNDLES_LICENSE_LIST="${BUNDLES_TOBE_LICENSED}"
+                            createSecret () {
+                            set +x
+                            kubectl create secret docker-registry ${IMAGESECRET_NAME} --docker-server=${HARBOR_REGISTRY_HOST} --docker-username=${IMAGE_REGISTRY_USERNAME} --docker-password=${IMAGE_REGISTRY_PASSWORD} -n "${IS_NAMESPACE}"
+                            [[ $? -ne 0 ]] && echo "Unable to generate secret." && exit 1;
+                            echo "secret is generated successfully"
+                            set -x
+                            }
+                            secretChk=0
+                            kubectl get secret ${IMAGESECRET_NAME} -n "${IS_NAMESPACE}" | grep "${IMAGESECRET_NAME}" || secretChk=$?
+                            if [ "$secretChk" -ne 0 ]
+                            then
+                                echo "Secret not found. Creating it."
+                                createSecret
+                            else
+                                kubectl delete secret ${IMAGESECRET_NAME} -n "${IS_NAMESPACE}"
+                                [[ $? -ne 0 ]] && echo "Could not delete Secret" && exit 1;
+                                echo "Secret is already Present. Deleting and recreating it with the registry credentials provided."
+                                createSecret
+                            fi
+
+                            export IMAGEPULLSECRET_NAME="${IMAGESECRET_NAME}"
+                            echo "secret name is $IMAGEPULLSECRET_NAME"
+                            set +x
+                            export INPUTTEMPLATE="${COMPACTINPUTTEMPLATE}"
+                            #if [ "${ENVIRONMENT}" == "prod" ]; then
+                                if [ "${CUSTOMER_SIZE}" == "C" ]; then
+                                    export INPUTTEMPLATE="${COMPACTINPUTTEMPLATE}"
+                                    export SMARTREPORTING_REPLICAS="1" SMARTREPORTING_JAVA_HEAP_SIZE="8192m" SMARTREPORTING_MEMORY_REQUEST="10Gi" SMARTREPORTING_MEMORY_LIMIT="12Gi" SMARTREPORTING_CPU_REQUEST="100m" SMARTREPORTING_CPU_LIMIT="4" 
+                                fi
+                                if [ "${CUSTOMER_SIZE}" == "XS" ]; then
+                                    export INPUTTEMPLATE="${EXTRASMALLINPUTTEMPLATE}"
+                                    export SMARTREPORTING_REPLICAS="1" SMARTREPORTING_JAVA_HEAP_SIZE="8192m" SMARTREPORTING_MEMORY_REQUEST="10Gi" SMARTREPORTING_MEMORY_LIMIT="12Gi" SMARTREPORTING_CPU_REQUEST="100m" SMARTREPORTING_CPU_LIMIT="4" 
+                                fi
+                                if [ "${CUSTOMER_SIZE}" == "S" ]; then
+                                    export INPUTTEMPLATE="${SMALLINPUTTEMPLATE}"
+                                    export SMARTREPORTING_REPLICAS="2" SMARTREPORTING_JAVA_HEAP_SIZE="4096m" SMARTREPORTING_MEMORY_REQUEST="5Gi" SMARTREPORTING_MEMORY_LIMIT="6Gi" SMARTREPORTING_CPU_REQUEST="100m" SMARTREPORTING_CPU_LIMIT="4" 
+                                fi
+                                if [ "${CUSTOMER_SIZE}" == "M" ]; then
+                                    export INPUTTEMPLATE="${MEDIUMINPUTTEMPLATE}"
+                                    export SMARTREPORTING_REPLICAS="2" SMARTREPORTING_JAVA_HEAP_SIZE="8192m" SMARTREPORTING_MEMORY_REQUEST="10Gi" SMARTREPORTING_MEMORY_LIMIT="12Gi" SMARTREPORTING_CPU_REQUEST="100m" SMARTREPORTING_CPU_LIMIT="4" 
+                                fi
+                                if [ "${CUSTOMER_SIZE}" == "L" ]; then
+                                    export INPUTTEMPLATE="${LARGEINPUTTEMPLATE}"
+                                    export SMARTREPORTING_REPLICAS="2" SMARTREPORTING_JAVA_HEAP_SIZE="8192m" SMARTREPORTING_MEMORY_REQUEST="10Gi" SMARTREPORTING_MEMORY_LIMIT="12Gi" SMARTREPORTING_CPU_REQUEST="100m" SMARTREPORTING_CPU_LIMIT="4" 
+                                fi
+                            #fi
+                            
+                            if [ "${AR_LOCALE_TO_INSTALL}" == "" ]; then
+                                export LOCALES="false"
+                            else
+                                export LOCALES="true"
+                            fi
+                            export AR_DB_JDBC_URL=${DB_JDBC_URL}
+                            export DB_PORT=${DB_PORT}
+                            if [[ "${REGISTRY_TYPE}" == "DTR" && "${PLATFORM_HELM_VERSION}" =~ 2021.* ]]; then
+                                export IMAGES_FILE="dtr.yaml"
+                                export REGISTRY_ORG="bmc"
+                                export SR_IMAGES_FILE="dtr.yaml"
+                            elif [[ "${REGISTRY_TYPE}" == "DTR" && "${PLATFORM_HELM_VERSION}" =~ 202[2-9].* ]]; then
+                                export IMAGES_FILE="devops.yaml"
+                                export REGISTRY_ORG="bmc"
+                                export SR_IMAGES_FILE="dtr.yaml"
+                            elif [ "${REGISTRY_TYPE}" == "HARBOR" ]; then
+                                export IMAGES_FILE="devops.yaml"
+                                export REGISTRY_ORG="helixinnovationsuite"
+                                export SR_IMAGES_FILE="devops.yaml"
+                            elif [ "${REGISTRY_TYPE}" == "DTR_STG" ]; then
+                                export IMAGES_FILE="devops.yaml"
+                                export REGISTRY_ORG="stg"
+                                export SR_IMAGES_FILE="devops.yaml"
+                            fi
+ 
+                            if [ "${DB_TYPE}" != "postgres" ]; then
+                                export AR_DB_RESTORE="false"
+                                export SMARTREPORTING_DB_RESTORE="false"
+                                export SMARTIT_DB_RESTORE="false"
+                                if [ "${DB_TYPE}" == "mssql" ]; then
+                                    export DB_TYPE="mssql"
+                                    #set -vx
+                                    #JDBC_URL="jdbc:sqlserver://${RSSO_DB_HOSTNAME}:${DB_PORT}\\\\\\\\;databaseName=${RSSO_DB_NAME}"
+                                    #export DB_CONN_STR="${JDBC_URL}"
+                                    export ATWS_DB_NAME="${AR_DB_NAME}"
+                                    export AR_DB_INSTANCE="${DATABASE_HOST_NAME}"  #this is for pre/post pipeline
+                                    #export AR_DB_CASE_INSENSITIVE="T"
+                                fi
+                                if [ "${DB_TYPE}" == "oracle" ]; then
+                                    export DB_TYPE="oracle"
+                                    #set -vx
+                                    #JDBC_URL="jdbc:oracle:thin:@//${RSSO_DB_HOSTNAME}:${DB_PORT}/${ORACLE_SERVICE_NAME}"
+                                    #export DB_CONN_STR="${JDBC_URL}"
+                                    export AR_ORACLE_SERVICE_NAME="${ORACLE_SERVICE_NAME}"
+                                    #export SMARTIT_ORACLE_SERVICE_NAME="${SMARTIT_DB_NAME}"
+                                    #export SR_ORACLE_SERVICE_NAME="${SMARTREPORTING_DB_NAME}"
+                                    export SR_ORACLE_SERVICE_NAME="${ORACLE_SERVICE_NAME}"
+                                    export AR_DB_NAME="${AR_DB_NAME}"
+                                    #export SMARTIT_DB_NAME="${ORACLE_SERVICE_NAME}"
+                                    export SMARTREPORTING_DB_NAME="${SMARTREPORTING_DB_NAME}"
+                                    export ATWS_DB_NAME="${ORACLE_SERVICE_NAME}"
+                                    export AR_DB_INSTANCE="${ORACLE_SERVICE_NAME}"  #this is for pre/post pipeline
+                                   #export AR_DB_CASE_INSENSITIVE="F"
+                                fi
+                            else
+                                if [ "${DATABASE_RESTORE}" == "true" ]; then
+                                    export AR_DB_RESTORE="true"
+                                    #if [ "${HELIX_SMARTREPORT}" == "true" -a "${DEPLOYMENT_MODE}" == "FRESH" ]; then
+                                        export SMARTREPORTING_DB_RESTORE="true"
+                                    #    else
+                                    #    export SMARTREPORTING_DB_RESTORE="false"
+                                    #fi
+                                else
+                                    export AR_DB_RESTORE="false"
+                                    export SMARTREPORTING_DB_RESTORE="false"
+                                fi
+                                    export SMARTIT_DB_RESTORE="false"
+                                    export DB_TYPE="postgres"
+                                    export ATWS_DB_NAME="${AR_DB_NAME}"
+                                    #export DB_CONN_STR="jdbc:postgresql://${RSSO_DB_HOSTNAME}:${DB_PORT}/${RSSO_DB_NAME}"
+                                    export AR_DB_INSTANCE="${AR_DB_NAME}"     #this is for pre/post pipeline
+                                    #export AR_DB_CASE_INSENSITIVE="T" 
+                                                              
+                            fi
+                            if [ "${IS_CLOUD}" == "false" ]; then
+                                export SERVICE_TYPE_TCP="ClusterIP"
+                            elif [ "${IS_CLOUD}" == "true" ]; then
+                                export SERVICE_TYPE_TCP="LoadBalancer"
+                            fi
+                            echo ${DEPLOYMENT_MODE}
+                            if [ "${DEPLOYMENT_MODE}" == "UPDATE" ]; then
+                                export SMARTAPPS_DEPLOYMENT_TYPE="update"
+                                #export SMARTREPORTING="true"
+                                export AR_USER="${AR_ADMIN_USER}"
+                                export AR_PASSWORD="${AR_ADMIN_PASSWORD}"
+                                export SR_SOURCE_VER="${SMARTREPORTING_SOURCE_VERSION}"
+                                if [[ "${SMARTREPORTING_SOURCE_VERSION}" == "20213"* ]]; then
+                                    export SMARTREPORTING_HELM_VERSION="2021303.1.06.00"
+                                else
+                                    export SMARTREPORTING_HELM_VERSION="210503.1.09.00"
+                                fi
+                            elif [ "${DEPLOYMENT_MODE}" == "FRESH" ]; then
+                                export SMARTAPPS_DEPLOYMENT_TYPE="fresh"
+                                #if [ "${HELIX_SMARTREPORT}" == "true" ]; then
+                                #    export SMARTREPORTING="true"
+                                #    else
+                                #    export SMARTREPORTING="false"
+                                #fi
+                                export AR_USER="Demo"
+                                export AR_PASSWORD="P@ssw0rd"
+                                export SR_SOURCE_VER=""
+                                export SMARTREPORTING_HELM_VERSION="210503.1.09.00"
+                            elif [ "${DEPLOYMENT_MODE}" == "UPGRADE" ]; then
+                                export SMARTAPPS_DEPLOYMENT_TYPE="UPGRADE"
+                                #export SMARTREPORTING="true"
+                                export AR_USER="${AR_ADMIN_USER}"
+                                export AR_PASSWORD="${AR_ADMIN_PASSWORD}"
+                                export SR_SOURCE_VER="${SMARTREPORTING_SOURCE_VERSION}"
+                                export SMARTREPORTING_HELM_VERSION="210503.1.09.00"
+                            elif [ "${DEPLOYMENT_MODE}" == "SERVICE" ]; then
+                                export AR_USER="${AR_ADMIN_USER}"
+                                export AR_PASSWORD="${AR_ADMIN_PASSWORD}"
+                            fi
+
+                            if [ "${IS_DATABASE_ALWAYS_ON}" == "false" ]; then
+                                export DB_ALWAYS_ON="No"
+                            else
+                                export DB_ALWAYS_ON="Yes"
+                            fi
+                            if [ "${ROUTE_ENABLED}" == "false" ]; then
+                                export ROUTE_ENABLED="false"
+                                export INGRESS_ENABLED="true"
+                            else
+                                export ROUTE_ENABLED="true"
+                                export INGRESS_ENABLED="false"
+                            fi
+
+                            JAVA_PATH=`which java`
+                            export JAVA_HOMEPATH=${JAVA_PATH%/bin/java}
+                            echo "java path is: "${JAVA_HOMEPATH}
+
+                            #RSSO_HOST_NAME=$(echo ${RSSO_URL} | cut -d'/' -f 3)
+                            export RSSO_HOSTNAME=$(echo ${RSSO_URL} | cut -d'/' -f 3)
+                            echo "rsso host name is: "$RSSO_HOSTNAME
+
+                            #echo ${input_parameter}
+                            export SOURCE_VER=$(echo ${input_parameter} | cut -d',' -f 1 | cut -d'=' -f 2)
+                            echo "source version is: "$SOURCE_VER
+
+                            AR_IP=$(echo ${PLATFORM_ADMIN_PLATFORM_EXTERNAL_IPS} | tr -d [ | tr -d ])
+                            export AR_HOST=$AR_IP
+                            echo "AR host IP is:" $AR_HOST
+                            export OS_RESTRICTED_SCC="${OS_RESTRICTED_SCC}"
+                            #if [ "${OS_RESTRICTED_SCC}" == "true" ]; then
+                            #    export FTS_ES_SECURE="false"
+                            #    #export DWP_CERTS_ENABLED="true"
+                            #else
+                            #    export FTS_ES_SECURE="true"
+                            #    #export DWP_CERTS_ENABLED="false"
+                            #fi
+
+                            export SMARTREPORTING_HELM_REPO="${SMARTREPORTING_HELM_REPO}"
+							if [ "${SIDECAR_FLUENT_OUTPUT_TYPE_SPLUNK}" == "true" ]; then
+                                export SIDECAR_FLUENT_OUTPUT_TYPE="SPLUNK"
+                                export FLUENTBIT_LOGS_HOSTNAME="${SIDECAR_FLUENT_SPLUNK_HOSTNAME}"
+                                export FLUENTBIT_LOGS_PORT="${SIDECAR_FLUENT_SPLUNK_PORT}"
+                            else
+                                export SIDECAR_FLUENT_OUTPUT_TYPE="ES"
+                                export FLUENTBIT_LOGS_HOSTNAME="${LOGS_ELASTICSEARCH_HOSTNAME}"
+                                export FLUENTBIT_LOGS_PORT="9200"
+                            fi
+
+                            if [ "${LOGS_ELASTICSEARCH_TLS}" == "true" ]; then
+                                export LOGS_ELASTICSEARCH_TLS_MODE="on"
+                                export LOGS_ELASTICSEARCH_AUTHENTICATION_TYPE="BASIC"
+                            else
+                                export LOGS_ELASTICSEARCH_TLS_MODE="off"
+                                export LOGS_ELASTICSEARCH_AUTHENTICATION_TYPE="none"
+                            fi
+
+                            if [ "${ENABLE_PLATFORM_INT_NORMALIZATION}" == "true" ]; then
+                                export PLATFORM_INT_ENABLE_SERVICES="normalization"
+                            fi
+
+                            set -x
+                            bash ${GENERATEITSMINPUT} "${INPUTTEMPLATE}" "${CUSTOMER_FILE}" "${CUSTOMER_NAME}" "${CUSTOMER_SERVICE}" "${ENVIRONMENT}"
+                            bash ${WORKSPACE}/pipeline/tasks/generatePreUpgradeInput.sh "${WORKSPACE}/pipeline/tasks/inputTemplates/Template_Pre_Upgrade.sh" "${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/PrePostUpgrade-Input.sh" "${CUSTOMER_NAME}" "${CUSTOMER_SERVICE}" "${ENVIRONMENT}"
+                            bash ${WORKSPACE}/pipeline/tasks/generateSRinput.sh "${WORKSPACE}/pipeline/tasks/inputTemplates/itsm_sr_template.sh" "${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/sr-inputs-file.sh" "${CUSTOMER_NAME}" "${CUSTOMER_SERVICE}" "${ENVIRONMENT}"
+                            if [ -f "${WORKSPACE}/environments/customer/customCerts/cacerts" ]; then
+                                echo "file present"
+                                cp ${WORKSPACE}/environments/customer/customCerts/cacerts ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/certs/
+                            else
+                                echo "file not present"
+                                cp ${WORKSPACE}/pipeline/tasks/cacerts ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/certs/
+                            fi
+                            if [ -f "${WORKSPACE}/environments/customer/customCerts/root.crt" ]; then
+                                echo "db root.crt file present"
+                                cp ${WORKSPACE}/environments/customer/customCerts/root.crt ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/ssljdbc/
+                            fi
+                            #cp ${WORKSPACE}/pipeline/tasks/cacerts ${WORKSPACE}/environments/customer/${CUSTOMER_SERVICE}/staging/configmapfiles/certs/
+
+                        '''
+                    }else{
+                        log.info("GENERATE_INPUT is False. Skipping the stage")
+                    }
+                    
+                }
+
+                
+                stage("Checkin Input File"){
+                    if("${CHECKIN_INPUT_FILE}"=="true"){
+                        log.info("CHECKIN PHASE")
+                        if("${LOCAL_GIT}"=="false")
+                        {
+                        withCredentials([usernamePassword(credentialsId: "${CHECKOUT_USING_USER}", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh'''
+                        diffPresence=0														 
+                        cd ${WORKSPACE}/environments
+                        git add -A
+                        git status
+                        git config --global user.email "pipeline@bmc.com"
+                        git config --global user.name "Pipeline"
+                        git commit -m "Pipeline adding Inputs for ${CUSTOMER_SERVICE} for ${ENVIRONMENT} by ${USER_APPLYING_LICENSE}" | grep "nothing to commit" || diffPresence=$?
+                        echo "diffPresence value is $diffPresence"
+                        if [ "$diffPresence" -ne 0 ]
+                        then
+                            export REPO_URL=$(echo $CUSTOMER_CONFIGS | awk -v GIT_USERNAME=$GIT_USERNAME -v GIT_PASSWORD=$GIT_PASSWORD -F"\\/\\/" \'{print $1 "//" GIT_USERNAME ":" GIT_PASSWORD "@" $2}\')
+                            git push $REPO_URL
+                        else
+                            echo "No diff found and hence nothing to commit and skipping check-in."
+                        fi
+                        '''
+                            }
+                        }else
+                         {
+                          checkinToLocalRepo()
+                         }
+                        }
+                    
+		 
+                    else{
+                        log.info("CHECKIN_INPUT_FILE is False. Skipping the stage")
+                    }
+                }
+                stage("Env Files Cleanup"){
+                    cleanup()
+                    // sh '''
+                    //     rm -rf ${WORKSPACE}/environments/customer/*
+                    // '''
+                }
+            }
+        catch(Exception e){
+                cleanup()
+                echo "Exception occured : ${e}"
+				currentBuild.result = 'FAILURE'
+		}
+		finally{
+            cleanup()
+            env.NOTIFICATION_SUBJECT="${env.PIPELINE_NAME} ${env.PIPELINE_TYPE} for ${CLUSTER}-${CUSTOMER_NAME}-${ENVIRONMENT}-${CURRENT_BRANCH} activity status: ${currentBuild.currentResult}"
+			sendEmail("${env.NOTIFICATION_SUBJECT}","${NOTIFYLIST}","");
+                
+        }
+                
+        
+    }
+}
+
+def cleanup(){
+    sh '''
+        rm -rf ${WORKSPACE}/environments/customer/*
+        if [ "${CUSTOMER_CONFIGS}" != "" ]; then
+        rm -rf /tmp/$(echo $(basename ${CUSTOMER_CONFIGS}) |cut -d'.' -f 1)
+        fi
+    '''
+}
+
+def setPipelineProperties()
+{
+	env.PIPELINE_TYPE="Prepration"
+	env.PIPELINE_NAME="Platform Inputs"
+}
+
+def checkinToLocalRepo()
+{
+    stage("CheckIN File") {
+        withCredentials([usernamePassword(credentialsId: "${CHECKOUT_USING_USER}", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+            sh '''
+            cd /tmp
+            rm -rf /tmp/$(echo $(basename ${CUSTOMER_CONFIGS}) |cut -d'.' -f 1)
+            REPO_URL=$(echo ${CUSTOMER_CONFIGS} | awk -v GIT_USERNAME=$GIT_USERNAME -v GIT_PASSWORD=$GIT_PASSWORD -F"\\/\\/" \'{print $1 "//" GIT_USERNAME ":" GIT_PASSWORD "@" $2}\')
+            git clone ${REPO_URL}
+            diffPresence=0
+            cp -R ${WORKSPACE}/environments/* /tmp/$(echo $(basename ${CUSTOMER_CONFIGS}) |cut -d'.' -f 1)/
+            cd /tmp/$(echo $(basename ${CUSTOMER_CONFIGS}) |cut -d'.' -f 1)/
+            git add -A
+            git commit -am "Pipeline adding Inputs for ${CUSTOMER_SERVICE} for ${ENVIRONMENT} by ${USER_APPLYING_LICENSE}" | grep "nothing to commit" || diffPresence=$?
+            echo "Difference between file in repo and file to be checked in is(1 means YES, 0 means NO) : $diffPresence"
+            if [ "$diffPresence" -ne 0 ]
+            then
+                git push origin master   
+            else
+                echo "No diff found and hence nothing to commit and skipping check-in."
+            fi
+            '''
+        }
+    }
+}
