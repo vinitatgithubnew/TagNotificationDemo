@@ -144,8 +144,8 @@ HELM_REPO_SOURCE=""
 # Only required for Update/Upgrade. Leave empty in case of a fresh deployment
 SOURCE_VERSION=""
 
-HELM_VERSION="2022106.0.04.00"
-TARGET_VERSION="2022106.0.04.00"
+HELM_VERSION="2022106.0.05.00"
+TARGET_VERSION="2022106.0.05.00"
 
 ## File to be used for image tags
 # Configurable only for DEV/QA. Default value should always be devops.yaml
