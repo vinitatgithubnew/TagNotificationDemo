@@ -46,8 +46,9 @@ def updateUberPipeline():
 		elif "name: 'SOURCE_VERSION')" in line:
 			if configDictionary["APPEND_SOURCE_VERSION"] != '':
 				versions = line.split("[", 1)[1].split("]")[0].split(",")
-				replace_str = versions.pop() + ",'" + configDictionary["APPEND_SOURCE_VERSION"] + "'"
-				new_line = line.replace(versions.pop(), replace_str)
+				lastVersion = versions.pop()
+				replace_str = lastVersion + ",'" + configDictionary["APPEND_SOURCE_VERSION"] + "'"
+				new_line = line.replace(lastVersion, replace_str)
 		replaced_content = replaced_content + new_line
 	file.close()
 
@@ -93,7 +94,7 @@ def addGitAndJenkinCommandsToBatch():
 		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key]
 
 	with open(r'TriggerInstallerJob.bat', 'w+') as file:
-		file.writelines('cd ..\..\..\\n') #itsm-git-installer path where git commands can be executed
+		file.writelines('cd ..\..\..\ \n') #itsm-git-installer path where git commands can be executed
 		file.writelines('git add .\n')
 		commitMessage = 'Updated with version ' + configDictionary["PLATFORM_HELM_VERSION"]
 		file.writelines('git commit -m "' + commitMessage + '"\n')
@@ -118,5 +119,5 @@ addGitAndJenkinCommandsToBatch()
 
 #Step 3: Trigger the job
 print("Jenkins parameters read from config files and commands ready. Running the job now.")
-#subprocess.call([r'TriggerInstallerJob.bat'])
+subprocess.call([r'TriggerInstallerJob.bat'])
 #-----------Execution Section Ends -----------------------------------
