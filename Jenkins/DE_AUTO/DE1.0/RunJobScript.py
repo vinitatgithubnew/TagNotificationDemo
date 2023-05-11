@@ -40,9 +40,9 @@ def updateUberPipeline():
 	for line in file:
 		new_line= line
 		if "name: 'PLATFORM_HELM_VERSION')" in line:
-			new_line = line.replace(line.split("['", 1)[1].split("']")[0], configDictionary["NEW_PLATFORM_HELM_VERSION"])
+			new_line = line.replace(line.split("['", 1)[1].split("']")[0], configDictionary["PLATFORM_HELM_VERSION"])
 		elif "name: 'SMARTAPPS_HELM_VERSION')" in line:
-			new_line = line.replace(line.split("['", 1)[1].split("']")[0], configDictionary["NEW_SMARTAPPS_HELM_VERSION"])
+			new_line = line.replace(line.split("['", 1)[1].split("']")[0], configDictionary["SMARTAPPS_HELM_VERSION"])
 		elif "name: 'SOURCE_VERSION')" in line:
 			if configDictionary["APPEND_SOURCE_VERSION"] != '':
 				versions = line.split("[", 1)[1].split("]")[0].split(",")
@@ -67,13 +67,13 @@ def updateITSMTemplateFile(fileName):
 		new_line= line
 		if line.startsWith("HELM_VERSION"):
 			print(line)
-			new_line = 'HELM_VERSION="'+ configDictionary["NEW_HELM_VERSION"] + '"\n'
+			new_line = 'HELM_VERSION="'+ configDictionary["HELM_VERSION"] + '"\n'
 		elif line.startsWith("TARGET_VERSION"):
 			print(line)
-			new_line = 'TARGET_VERSION="'+ configDictionary["NEW_TARGET_VERSION"] + '"\n'
+			new_line = 'TARGET_VERSION="'+ configDictionary["TARGET_VERSION"] + '"\n'
 		elif line.startsWith("SMARTAPPS_HELM_VERSION"):
 			print(line)
-			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["NEW_SMARTAPPS_HELM_VERSION"] + '"\n'
+			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"] + '"\n'
 		replaced_content = replaced_content + new_line
 	file.close()
 
