@@ -144,8 +144,8 @@ HELM_REPO_SOURCE=""
 # Only required for Update/Upgrade. Leave empty in case of a fresh deployment
 SOURCE_VERSION=""
 
-HELM_VERSION="2022106.0.02.00"
-TARGET_VERSION="2022106.0.02.00"
+HELM_VERSION="2022106.0.03.00"
+TARGET_VERSION="2022106.0.03.00"
 
 ## File to be used for image tags
 # Configurable only for DEV/QA. Default value should always be devops.yaml
@@ -1430,7 +1430,7 @@ SMARTAPPS_ADMIN=""
 SMARTAPPS_PASSWORD=""
 
 SMARTAPPS_HELM_REPO="http://zwl-gogs-1.onbmc.com:3000/core-remedy/containerization-smartapps-certified.git"
-SMARTAPPS_HELM_VERSION="2022106.0.02.01"
+SMARTAPPS_HELM_VERSION="2022106.0.03.00"
 SMARTAPPS_HELM_IMAGES_FILE="dtr.yaml"
 SMARTAPPS_DEPLOYMENT_TYPE=""
 
