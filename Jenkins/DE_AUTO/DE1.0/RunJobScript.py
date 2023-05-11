@@ -95,7 +95,7 @@ def addGitAndJenkinCommandsToBatch():
 	with open(r'TriggerInstallerJob.bat', 'w+') as file:
 		file.writelines('cd ..\..\..\\n') #itsm-git-installer path where git commands can be executed
 		file.writelines('git add .\n')
-		commitMessage = 'Updated with version ' + configDictionary["NEW_PLATFORM_HELM_VERSION"]
+		commitMessage = 'Updated with version ' + configDictionary["PLATFORM_HELM_VERSION"]
 		file.writelines('git commit -m "' + commitMessage + '"\n')
 		file.writelines('git push\n')
 		file.writelines('cd Jenkins/DE_AUTO/DE1.0\n')
