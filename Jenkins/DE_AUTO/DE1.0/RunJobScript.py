@@ -65,13 +65,14 @@ def updateITSMTemplateFile(fileName):
 	#Replace the PLATFORM and SMARTAPPS HELM VERSION + Update SOURCE_VERSION
 	for line in file:
 		new_line= line
-		if line.startsWith("HELM_VERSION"):
+		type(line)
+		if line.startswith("HELM_VERSION"):
 			print(line)
 			new_line = 'HELM_VERSION="'+ configDictionary["HELM_VERSION"] + '"\n'
-		elif line.startsWith("TARGET_VERSION"):
+		elif line.startswith("TARGET_VERSION"):
 			print(line)
 			new_line = 'TARGET_VERSION="'+ configDictionary["TARGET_VERSION"] + '"\n'
-		elif line.startsWith("SMARTAPPS_HELM_VERSION"):
+		elif line.startswith("SMARTAPPS_HELM_VERSION"):
 			print(line)
 			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"] + '"\n'
 		replaced_content = replaced_content + new_line
