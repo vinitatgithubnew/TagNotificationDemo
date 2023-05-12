@@ -19,6 +19,25 @@ JENKINS_URL = 'java -jar jenkins-cli.jar -s http://vl-aus-domqa134:8080/ -auth a
 #-----------Libraries and Parameters Section Ends -----------------------------------
 
 #-----------Functions Section Starts -----------------------------------
+#function to validate configuration files
+def validateConfigFiles():
+	errors = ""
+	configDictionary = loadConfigProperties()
+	jobDictionary = loadJobProperties()
+	if not configDictionary["PLATFORM_HELM_VERSION"]:
+		errors = errors + " PLATFORM_HELM_VERSION is blank.\n"
+	if not configDictionary["SMARTAPPS_HELM_VERSION"]:
+		errors = errors + " SMARTAPPS_HELM_VERSION is blank.\n"
+	if not configDictionary["HELM_VERSION"]:
+		errors = errors + " HELM_VERSION is blank.\n"
+	if not configDictionary["TARGET_VERSION"]:
+		errors = errors + " TARGET_VERSION is blank.\n"
+	if not configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"]:
+		errors = errors + " TEMPLATE_SMARTAPPS_HELM_VERSION is blank.\n"
+	if not configDictionary["JENKINS_JOB_NAME"]:
+		errors = errors + " JENKINS_JOB_NAME is blank.\n"
+	return errors
+ 
 #Function to load the job.properties file to dictionary
 def loadJobProperties():
 	with open('job.properties') as file:
@@ -108,16 +127,19 @@ def addGitAndJenkinCommandsToBatch():
     
 #-----------Execution Section Starts -----------------------------------
 #Step 1: Replace/update Uber Pipeline and ITSM Template files with correct version number
-updateUberPipeline()
-updateITSMTemplateFile("itsmtemplate_compact.sh")
-updateITSMTemplateFile("itsmtemplate_large.sh")
-updateITSMTemplateFile("itsmtemplate_small.sh")
-updateITSMTemplateFile("itsmtemplate_medium.sh")
-
-#Step 2: Create the Batch file with Jenkin command with correct parameters
-addGitAndJenkinCommandsToBatch()
-
-#Step 3: Trigger the job
-print("Jenkins parameters read from config files and commands ready. Running the job now.")
-subprocess.call([r'TriggerInstallerJob.bat'])
+errors = validateConfigFiles()
+if not errors:
+    updateUberPipeline()
+    updateITSMTemplateFile("itsmtemplate_compact.sh")
+    updateITSMTemplateFile("itsmtemplate_large.sh")
+    updateITSMTemplateFile("itsmtemplate_small.sh")
+    updateITSMTemplateFile("itsmtemplate_medium.sh")
+    #Step 2: Create the Batch file with Jenkin command with correct parameters
+    addGitAndJenkinCommandsToBatch()
+    #Step 3: Trigger the job
+    print("Jenkins parameters read from config files and commands ready. Running the job now.")
+    subprocess.call([r'TriggerInstallerJob.bat'])
+else:
+	print("Parameters in the configuration files is/are not valid. Errors:")
+	print(errors)
 #-----------Execution Section Ends -----------------------------------
