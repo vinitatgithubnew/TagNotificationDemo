@@ -102,8 +102,8 @@ def addGitAndJenkinCommandsToBatch():
 		file.writelines('cd Jenkins/DE_AUTO/DE1.0\n')
 		
 		#check in the changes and push to repo
-		file.writelines(JENKINS_URL + ' build ' + JOB_NAME + jobParameters + ' -f \n')
-		#file.writelines(JENKINS_URL + ' console '+ JOB_NAME + ' -f')
+		file.writelines(JENKINS_URL + ' build ' + JOB_NAME + jobParameters + ' \n')
+		file.writelines(JENKINS_URL + ' console '+ JOB_NAME + ' -f')
 #-----------Functions Section Ends -----------------------------------
     
 #-----------Execution Section Starts -----------------------------------
