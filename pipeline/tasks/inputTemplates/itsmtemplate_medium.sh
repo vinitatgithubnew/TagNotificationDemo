@@ -144,8 +144,8 @@ HELM_REPO_SOURCE=""
 # Only required for Update/Upgrade. Leave empty in case of a fresh deployment
 SOURCE_VERSION=""
 
-HELM_VERSION="2022106.0.02.00"
-TARGET_VERSION="2022106.0.02.00"
+HELM_VERSION="2022106.0.04.00"
+TARGET_VERSION="2022106.0.04.00"
 
 ## File to be used for image tags
 # Configurable only for DEV/QA. Default value should always be devops.yaml
@@ -426,6 +426,7 @@ PLATFORM_COMMON_CMDB_REDIRECT_URL="https://${CUSTOMER_SERVICE_NAME}${ENVIRONMENT
 PLATFORM_COMMON_DEFAULT_WEB_PATH="https://${CUSTOMER_SERVICE_NAME}${ENVIRONMENT_URL}.${CLUSTER_DOMAIN}/arsys" # Needs to be configured
 PLATFORM_COMMON_AR_SERVER_ALIAS="${AR_SERVER_ALIAS}"
 PLATFORM_COMMON_AR_SERVER_DOMAIN="${CLUSTER_DOMAIN}"  # Needs to be configured
+PLATFORM_COMMON_RSSO_AGENTID="${CUSTOMER_SERVICE_NAME}-${ENVIRONMENT}"
 
 # Implicitly defaults to changeit if empty
 PLATFORM_COMMON_CACERTS_SSL_TRUSTSTORE_PASSWORD='${CACERTS_SSL_TRUSTSTORE_PASSWORD}'
@@ -1435,7 +1436,7 @@ SMARTAPPS_ADMIN=""
 SMARTAPPS_PASSWORD=""
 
 SMARTAPPS_HELM_REPO="http://zwl-gogs-1.onbmc.com:3000/core-remedy/containerization-smartapps-certified.git"
-SMARTAPPS_HELM_VERSION="2022106.0.02.00"
+SMARTAPPS_HELM_VERSION="2022106.0.04.06"
 SMARTAPPS_HELM_IMAGES_FILE="dtr.yaml"
 SMARTAPPS_DEPLOYMENT_TYPE=""
 
@@ -1549,6 +1550,7 @@ DWP_CONFIG_COMAROUND_FB_APPLY_USER_EMAIL=""
 # Json {"tenantName":"ingress",...} format to create additional ingress for external tenant
 DWP_EXTRA_TENANTS=''
 
+BWF_DEPLOY_SAMPLE_CONTENT_PACK="false"
 DWP_DEPLOY_SAMPLE_CONTENT_PACK="false"
 
 #################
