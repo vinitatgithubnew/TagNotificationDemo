@@ -14,13 +14,12 @@ import sys
 import subprocess
 import  re
 
-#Script Parameters
-JENKINS_URL = 'java -jar jenkins-cli.jar -s http://vl-aus-domqa134:8080/ -auth admin:admin -webSocket'
 #-----------Libraries and Parameters Section Ends -----------------------------------
 
 #-----------Functions Section Starts -----------------------------------
 #function to validate configuration files
 def validateConfigFiles():
+	print("Validating config files...")
 	errors = ""
 	configDictionary = loadConfigProperties()
 	jobDictionary = loadJobProperties()
@@ -36,6 +35,10 @@ def validateConfigFiles():
 		errors = errors + " TEMPLATE_SMARTAPPS_HELM_VERSION is blank.\n"
 	if not configDictionary["JENKINS_JOB_NAME"]:
 		errors = errors + " JENKINS_JOB_NAME is blank.\n"
+
+	if not errors:
+		print("Validation of config files successful...")
+
 	return errors
  
 #Function to load the job.properties file to dictionary
@@ -53,6 +56,7 @@ def loadConfigProperties():
 #Function to Replace the content in the HELIX_ONPREM_DEPLOYMENT file by refering to job.properties 
 def updateUberPipeline():
 	configDictionary = loadConfigProperties()
+	print("Updating uber pipeline jenkinsfile...")
 	file = open("..\..\..\pipeline\jenkinsfile\HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "r")
 	replaced_content = ""
 	#Replace the PLATFORM and SMARTAPPS HELM VERSION + Update SOURCE_VERSION
@@ -75,9 +79,11 @@ def updateUberPipeline():
 	write_file = open("..\..\..\pipeline\jenkinsfile\HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "w")
 	write_file.write(replaced_content)
 	write_file.close()
-
+	print("Update uber pipeline jenkinsfile successful...")
+ 
 #Function to update ITSM Template file with correct TARGET and HELM version from job.properties
 def updateITSMTemplateFile(fileName):
+	print("Updating itsm Template file " + fileName + "...")    
 	configDictionary = loadConfigProperties()
 	filePath = "..\\..\\..\\pipeline\\tasks\\inputTemplates\\" + fileName
 	file = open(filePath, "r")
@@ -87,13 +93,10 @@ def updateITSMTemplateFile(fileName):
 		new_line= line
 		type(line)
 		if line.startswith("HELM_VERSION"):
-			print(line)
 			new_line = 'HELM_VERSION="'+ configDictionary["HELM_VERSION"] + '"\n'
 		elif line.startswith("TARGET_VERSION"):
-			print(line)
 			new_line = 'TARGET_VERSION="'+ configDictionary["TARGET_VERSION"] + '"\n'
 		elif line.startswith("SMARTAPPS_HELM_VERSION"):
-			print(line)
 			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"] + '"\n'
 		replaced_content = replaced_content + new_line
 	file.close()
@@ -102,11 +105,14 @@ def updateITSMTemplateFile(fileName):
 	write_file = open(filePath, "w")
 	write_file.write(replaced_content)
 	write_file.close()
+	print("Update itsm Template file " + fileName + " successful...")
 
 #Function to prepare the Batch file with git and Jenkins commands
 def addGitAndJenkinCommandsToBatch():
+	print("Preparing Batch file with git and jenkins commands...")
 	jobDictionary = loadJobProperties()
 	configDictionary = loadConfigProperties()
+	JENKINS_URL = 'java -jar jenkins-cli.jar -s http://' + configDictionary["JENKINS_SERVER"] + ':8080/ -auth ' + configDictionary["JENKINS_USERNAME"]+':'+configDictionary["JENKINS_PASSWORD"] + ' -webSocket'
 	JOB_NAME = configDictionary["JENKINS_JOB_NAME"]
 	jobParameters = ''
 	for key in jobDictionary:
@@ -115,7 +121,7 @@ def addGitAndJenkinCommandsToBatch():
 	with open(r'TriggerInstallerJob.bat', 'w+') as file:
 		file.writelines('cd ..\..\..\ \n') #itsm-git-installer path where git commands can be executed
 		file.writelines('git add .\n')
-		commitMessage = 'Updated with version ' + configDictionary["PLATFORM_HELM_VERSION"]
+		commitMessage = 'HELM_VERSION: ' + configDictionary["PLATFORM_HELM_VERSION"] + ' and SMARTAPPS_VERSION: ' + configDictionary["SMARTAPPS_HELM_VERSION"]
 		file.writelines('git commit -m "' + commitMessage + '"\n')
 		file.writelines('git push\n')
 		file.writelines('cd Jenkins/DE_AUTO/DE1.0\n')
@@ -123,6 +129,7 @@ def addGitAndJenkinCommandsToBatch():
 		#check in the changes and push to repo
 		file.writelines(JENKINS_URL + ' build ' + JOB_NAME + jobParameters + ' \n')
 		file.writelines(JENKINS_URL + ' console '+ JOB_NAME + ' -f')
+		print("Prepare Batch file with git and jenkins commands successful...")
 #-----------Functions Section Ends -----------------------------------
     
 #-----------Execution Section Starts -----------------------------------
@@ -137,7 +144,7 @@ if not errors:
     #Step 2: Create the Batch file with Jenkin command with correct parameters
     addGitAndJenkinCommandsToBatch()
     #Step 3: Trigger the job
-    print("Jenkins parameters read from config files and commands ready. Running the job now.")
+    print("Running the batch file for installer creation now....")
     #subprocess.call([r'TriggerInstallerJob.bat'])
 else:
 	print("Parameters in the configuration files is/are not valid. Errors:")
