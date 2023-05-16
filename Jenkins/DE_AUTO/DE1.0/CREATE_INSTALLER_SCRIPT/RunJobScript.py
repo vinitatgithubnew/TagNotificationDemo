@@ -139,7 +139,7 @@ if not errors:
     addGitAndJenkinCommandsToBatch()
     #Step 3: Trigger the job
     print("Running the batch file for installer creation now....")
-    #subprocess.call([r'TriggerInstallerJob.bat'])
+    subprocess.call([r'TriggerInstallerJob.bat'])
 else:
 	print("Parameters in the configuration files is/are not valid. Errors:")
 	print(errors)
