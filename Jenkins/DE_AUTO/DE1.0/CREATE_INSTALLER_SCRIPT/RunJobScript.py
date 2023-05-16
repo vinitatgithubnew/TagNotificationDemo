@@ -108,6 +108,11 @@ def addGitAndJenkinCommandsToBatch():
 	configDictionary = loadConfigProperties()
 	JENKINS_URL = 'java -jar jenkins-cli.jar -s http://' + configDictionary["JENKINS_SERVER"] + ':' + configDictionary["JENKINS_PORT"]+ '/ -auth ' + configDictionary["JENKINS_USERNAME"]+':'+configDictionary["JENKINS_PASSWORD"] + ' -webSocket'
 	JOB_NAME = configDictionary["JENKINS_JOB_NAME"]
+	#Set Job Parameters before creating jenkins command
+	jobDictionary["PLATFORM_HELM_VERSION"] = configDictionary["PLATFORM_HELM_VERSION"]
+	jobDictionary["SMARTAPPS_HELM_VERSION"] = configDictionary["SMARTAPPS_HELM_VERSION"]
+	jobDictionary["ZIP_VERSION"] = configDictionary["ZIP_VERSION"]
+	
 	jobParameters = ''
 	for key in jobDictionary:
 		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key]
