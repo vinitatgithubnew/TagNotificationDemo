@@ -27,12 +27,6 @@ def validateConfigFiles():
 		errors = errors + " PLATFORM_HELM_VERSION is blank.\n"
 	if not configDictionary["SMARTAPPS_HELM_VERSION"]:
 		errors = errors + " SMARTAPPS_HELM_VERSION is blank.\n"
-	if not configDictionary["HELM_VERSION"]:
-		errors = errors + " HELM_VERSION is blank.\n"
-	if not configDictionary["TARGET_VERSION"]:
-		errors = errors + " TARGET_VERSION is blank.\n"
-	if not configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"]:
-		errors = errors + " TEMPLATE_SMARTAPPS_HELM_VERSION is blank.\n"
 	if not configDictionary["JENKINS_JOB_NAME"]:
 		errors = errors + " JENKINS_JOB_NAME is blank.\n"
 
@@ -57,7 +51,7 @@ def loadConfigProperties():
 def updateUberPipeline():
 	configDictionary = loadConfigProperties()
 	print("Updating uber pipeline jenkinsfile...")
-	file = open("..\..\..\pipeline\jenkinsfile\HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "r")
+	file = open("../../../../pipeline/jenkinsfile/HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "r")
 	replaced_content = ""
 	#Replace the PLATFORM and SMARTAPPS HELM VERSION + Update SOURCE_VERSION
 	for line in file:
@@ -76,7 +70,7 @@ def updateUberPipeline():
 	file.close()
 
 	#Replace the content in the HELIX_ONPREM_DEPLOYMENT file
-	write_file = open("..\..\..\pipeline\jenkinsfile\HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "w")
+	write_file = open("../../../../pipeline/jenkinsfile/HELIX_ONPREM_DEPLOYMENT.jenkinsfile", "w")
 	write_file.write(replaced_content)
 	write_file.close()
 	print("Update uber pipeline jenkinsfile successful...")
@@ -85,7 +79,7 @@ def updateUberPipeline():
 def updateITSMTemplateFile(fileName):
 	print("Updating itsm Template file " + fileName + "...")    
 	configDictionary = loadConfigProperties()
-	filePath = "..\\..\\..\\pipeline\\tasks\\inputTemplates\\" + fileName
+	filePath = "../../../../pipeline/tasks/inputTemplates/" + fileName
 	file = open(filePath, "r")
 	replaced_content = ""
 	#Replace the PLATFORM and SMARTAPPS HELM VERSION + Update SOURCE_VERSION
@@ -93,11 +87,11 @@ def updateITSMTemplateFile(fileName):
 		new_line= line
 		type(line)
 		if line.startswith("HELM_VERSION"):
-			new_line = 'HELM_VERSION="'+ configDictionary["HELM_VERSION"] + '"\n'
+			new_line = 'HELM_VERSION="'+ configDictionary["PLATFORM_HELM_VERSION"] + '"\n'
 		elif line.startswith("TARGET_VERSION"):
-			new_line = 'TARGET_VERSION="'+ configDictionary["TARGET_VERSION"] + '"\n'
+			new_line = 'TARGET_VERSION="'+ configDictionary["PLATFORM_HELM_VERSION"] + '"\n'
 		elif line.startswith("SMARTAPPS_HELM_VERSION"):
-			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["TEMPLATE_SMARTAPPS_HELM_VERSION"] + '"\n'
+			new_line = 'SMARTAPPS_HELM_VERSION="'+ configDictionary["SMARTAPPS_HELM_VERSION"] + '"\n'
 		replaced_content = replaced_content + new_line
 	file.close()
 
@@ -112,14 +106,14 @@ def addGitAndJenkinCommandsToBatch():
 	print("Preparing Batch file with git and jenkins commands...")
 	jobDictionary = loadJobProperties()
 	configDictionary = loadConfigProperties()
-	JENKINS_URL = 'java -jar jenkins-cli.jar -s http://' + configDictionary["JENKINS_SERVER"] + ':8080/ -auth ' + configDictionary["JENKINS_USERNAME"]+':'+configDictionary["JENKINS_PASSWORD"] + ' -webSocket'
+	JENKINS_URL = 'java -jar jenkins-cli.jar -s http://' + configDictionary["JENKINS_SERVER"] + ':' + configDictionary["JENKINS_PORT"]+ '/ -auth ' + configDictionary["JENKINS_USERNAME"]+':'+configDictionary["JENKINS_PASSWORD"] + ' -webSocket'
 	JOB_NAME = configDictionary["JENKINS_JOB_NAME"]
 	jobParameters = ''
 	for key in jobDictionary:
 		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key]
 
 	with open(r'TriggerInstallerJob.bat', 'w+') as file:
-		file.writelines('cd ..\..\..\ \n') #itsm-git-installer path where git commands can be executed
+		file.writelines('cd ../../../../ \n') #itsm-git-installer path where git commands can be executed
 		file.writelines('git add .\n')
 		commitMessage = 'HELM_VERSION: ' + configDictionary["PLATFORM_HELM_VERSION"] + ' and SMARTAPPS_VERSION: ' + configDictionary["SMARTAPPS_HELM_VERSION"]
 		file.writelines('git commit -m "' + commitMessage + '"\n')
