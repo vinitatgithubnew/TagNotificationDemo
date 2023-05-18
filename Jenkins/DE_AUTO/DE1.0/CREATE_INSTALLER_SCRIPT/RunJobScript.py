@@ -38,13 +38,15 @@ def validateConfigFiles():
 #Function to load the job.properties file to dictionary
 def loadJobProperties():
 	with open('job.properties') as file:
-		jobDictionary = dict(line.strip().split('=') for line in file)
+		comment_less = filter(None, (line.split('#')[0].strip() for line in file))
+		jobDictionary = dict(line.strip().split('=') for line in comment_less)
 	return jobDictionary
 
 #Function to load the job.properties file to dictionary
 def loadConfigProperties():
 	with open('config.properties') as file:
-		configDictionary = dict(line.strip().split('=') for line in file)
+		comment_less = filter(None, (line.split('#')[0].strip() for line in file))
+		configDictionary = dict(line.strip().split('=') for line in comment_less)
 	return configDictionary
 
 #Function to Replace the content in the HELIX_ONPREM_DEPLOYMENT file by refering to job.properties 
@@ -112,6 +114,7 @@ def addGitAndJenkinCommandsToBatch():
 	jobDictionary["PLATFORM_HELM_VERSION"] = configDictionary["PLATFORM_HELM_VERSION"]
 	jobDictionary["SMARTAPPS_HELM_VERSION"] = configDictionary["SMARTAPPS_HELM_VERSION"]
 	jobDictionary["ZIP_VERSION"] = configDictionary["ZIP_VERSION"]
+	jobDictionary["PLAYBOOKS_REPO_BRANCH"] = configDictionary["PLAYBOOKS_REPO_BRANCH"]
 	
 	jobParameters = ''
 	for key in jobDictionary:
@@ -144,7 +147,7 @@ if not errors:
     addGitAndJenkinCommandsToBatch()
     #Step 3: Trigger the job
     print("Running the batch file for installer creation now....")
-    subprocess.call([r'TriggerInstallerJob.bat'])
+    #subprocess.call([r'TriggerInstallerJob.bat'])
 else:
 	print("Parameters in the configuration files is/are not valid. Errors:")
 	print(errors)
