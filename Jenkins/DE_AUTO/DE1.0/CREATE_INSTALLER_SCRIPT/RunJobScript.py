@@ -4,8 +4,8 @@
 # Updated Date: 04-May-2023
 # Updated By: 
 # Referred Files (Make sure these files have accurate values before running this script):
-# job.properties
 # config.properties
+# job.properties
 # Usage : py .\RunJobScript.py
 
 #-----------Libraries and Parameters Section Starts -----------------------------------
