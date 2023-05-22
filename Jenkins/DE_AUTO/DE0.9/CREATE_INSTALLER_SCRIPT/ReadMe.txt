@@ -15,15 +15,16 @@ Steps to Run the Installer Creation Script:
 - Edit config.properties file: vi config.properties
 - Modify following parameters as per your requirements:
 APPEND_SOURCE_VERSION=2021308.1.08.00 //Keept this blank if no SOURCE_VERSION to append
-PLATFORM_HELM_VERSION=2022106.0.04.00 //New HELM_VERSION - tag received from the product team. Keep it unchanged if want to continuw with same version.
-SMARTAPPS_HELM_VERSION=2022106.0.04.06 //New SMARTAPPS_HELM_VERSION - tag received from the product team. Keep it unchanged if want to continuw with same version.
+PLATFORM_HELM_VERSION=2022106.0.04.00 //New HELM_VERSION - tag received from the product team. Keep it unchanged if want to continue with same version.
+SMARTAPPS_HELM_VERSION=2022106.0.04.06 //New SMARTAPPS_HELM_VERSION - tag received from the product team. Keep it unchanged if want to continue with same version.
 ZIP_VERSION=22106_DROP4 //Update the ZIP version as per requirement
 PLAYBOOKS_REPO_BRANCH=213000-maint//Update the branch if needed
 JENKINS_JOB_NAME=CREATE_ONPREM_INSTALLER
 JENKINS_SERVER=vl-aus-domqa134 //Your Jenkins Server Name
 JENKINS_PORT=8080 //Your Jenkins Port
 JENKINS_USERNAME=admin //Your Jenkins Username
-JENKINS_PASSWORD=admin //Your Jenkins Password
+JENKINS_PASSWORD= //Your Jenkins Password
+GIT_TOKEN=//Git Token
 - Review job.properties file and modify parameters if needed. Please note, python script uses following job parameters from config.properties that you need not modify in job.properties.
 PLAYBOOKS_REPO_BRANCH
 PLATFORM_HELM_VERSION

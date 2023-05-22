@@ -22,7 +22,6 @@ def validateConfigFiles():
 	print("Validating config files...")
 	errors = ""
 	configDictionary = loadConfigProperties()
-	jobDictionary = loadJobProperties()
 	if not configDictionary["PLATFORM_HELM_VERSION"]:
 		errors = errors + " PLATFORM_HELM_VERSION is blank.\n"
 	if not configDictionary["SMARTAPPS_HELM_VERSION"]:
@@ -118,15 +117,15 @@ def addGitAndJenkinCommandsToBatch():
 	
 	jobParameters = ''
 	for key in jobDictionary:
-		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key]
+		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key].replace('GIT_TOKEN', jobDictionary['GIT_TOKEN'])
 
-	with open(r'TriggerInstallerJob.bat', 'w+') as file:
+	with open(r'TriggerInstallerJob.sh', 'w+') as file:
 		file.writelines('cd ../../../../ \n') #itsm-git-installer path where git commands can be executed
 		file.writelines('git add .\n')
 		commitMessage = 'HELM_VERSION: ' + configDictionary["PLATFORM_HELM_VERSION"] + ' and SMARTAPPS_VERSION: ' + configDictionary["SMARTAPPS_HELM_VERSION"]
 		file.writelines('git commit -m "' + commitMessage + '"\n')
 		file.writelines('git push\n')
-		file.writelines('cd Jenkins/DE_AUTO/DE1.0\n')
+		file.writelines('cd Jenkins/DE_AUTO/DE0.9\n')
 		
 		#check in the changes and push to repo
 		file.writelines(JENKINS_URL + ' build ' + JOB_NAME + jobParameters + ' \n')
@@ -147,7 +146,7 @@ if not errors:
     addGitAndJenkinCommandsToBatch()
     #Step 3: Trigger the job
     print("Running the batch file for installer creation now....")
-    #subprocess.call([r'TriggerInstallerJob.bat'])
+    subprocess.call([r'sh TriggerInstallerJob.sh'], shell=True)
 else:
 	print("Parameters in the configuration files is/are not valid. Errors:")
 	print(errors)
