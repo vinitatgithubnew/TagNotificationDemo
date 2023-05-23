@@ -1,9 +1,17 @@
+#Keept APPEND_SOURCE_VERSION blank if no SOURCE_VERSION to append
 APPEND_SOURCE_VERSION=2021308.1.08.00
+#New HELM_VERSION - tag received from the product team. Keep it unchanged if want to continue with same version.
 PLATFORM_HELM_VERSION=2022106.0.04.00
+#New SMARTAPPS_HELM_VERSION - tag received from the product team. Keep it unchanged if want to continue with same version.
 SMARTAPPS_HELM_VERSION=2022106.0.04.06
-JENKINS_JOB_NAME=HELIX_IS_ZIP_RETAG
+#Update the ZIP version as per requirement
+ZIP_VERSION=22106_DROP4
+#Update the branch if needed
+PLAYBOOKS_REPO_BRANCH=213000-maint
+#Update following only if these configurations are changed or if you are setting up new environment
+JENKINS_JOB_NAME=CREATE_ONPREM_INSTALLER
 JENKINS_SERVER=vl-aus-domqa134
 JENKINS_PORT=8080
 JENKINS_USERNAME=admin
 JENKINS_PASSWORD=admin
-ZIP_VERSION=22106_DROP4
+GIT_TOKEN=9bbd889ebd2f1d15d1430c183b850d3be54301cb

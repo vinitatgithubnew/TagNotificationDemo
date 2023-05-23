@@ -117,7 +117,7 @@ def addGitAndJenkinCommandsToBatch():
 	
 	jobParameters = ''
 	for key in jobDictionary:
-		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key].replace('GIT_TOKEN', jobDictionary['GIT_TOKEN'])
+		jobParameters = jobParameters + ' -p ' + key + '=' + jobDictionary[key].replace('GIT_TOKEN', configDictionary['GIT_TOKEN'])
 
 	with open(r'TriggerInstallerJob.sh', 'w+') as file:
 		file.writelines('cd ../../../../ \n') #itsm-git-installer path where git commands can be executed
@@ -146,7 +146,7 @@ if not errors:
     addGitAndJenkinCommandsToBatch()
     #Step 3: Trigger the job
     print("Running the batch file for installer creation now....")
-    subprocess.call([r'sh TriggerInstallerJob.sh'], shell=True)
+    #subprocess.call([r'sh TriggerInstallerJob.sh'], shell=True)
 else:
 	print("Parameters in the configuration files is/are not valid. Errors:")
 	print(errors)
